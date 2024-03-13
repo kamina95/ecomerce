@@ -1,4 +1,4 @@
-package org.example;
+package scrapers;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -7,7 +7,9 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import user.product.Product;
 
-public class eCommerceDao {
+import java.util.List;
+
+public class ECommerceDao {
     private SessionFactory sessionFactory;
     public void init(){
         try {
@@ -42,12 +44,29 @@ public class eCommerceDao {
         }
     }
 
-    public Product simpleSave(Product product){
+//    public Product simpleSave(Product product){
+//        Session session = sessionFactory.getCurrentSession();
+//        session.beginTransaction();
+//        session.saveOrUpdate(product);
+//        session.getTransaction().commit();
+//        session.close();
+//        return product;
+//    }
+
+    public void simpleSave(Product comparison) {
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
-        session.saveOrUpdate(product);
+
+        // Query to retrieve GraphicCard based on the model
+        String queryStr = "from Product where product_desc='" + comparison.getProduct_desc() + "'";
+        List<Product> graphicCardList = session.createQuery(queryStr).getResultList();
+
+         if (graphicCardList.size() == 0) {
+            // Save or update GraphicCard if not found
+            session.saveOrUpdate(comparison);
+        }
+        // Commit the transaction and close the session
         session.getTransaction().commit();
         session.close();
-        return product;
     }
 }

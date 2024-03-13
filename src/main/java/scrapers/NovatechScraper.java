@@ -1,21 +1,20 @@
-package org.example;
+package scrapers;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import user.product.Product;
 
 import java.math.BigDecimal;
 
-public class NovatechScrapper {
+public class NovatechScraper extends Scraper {
 
     public static Document doc;
     private static final String ABS_URL = "https://www.novatech.co.uk";
 
-    public static eCommerceDao ecommercedao = new eCommerceDao();
 
-    public static void scrapeAll(){
+    @Override
+    public void scrapeAll(){
         Elements productUrlList = new Elements();
         String url = "https://www.novatech.co.uk/products/components/nvidiageforcegraphicscards/?pg=";
         for(int i=1; i<=4 ; i++){
@@ -26,9 +25,8 @@ public class NovatechScrapper {
     }
 
 
-    public static void extractFeatures(Elements products){
+    public void extractFeatures(Elements products){
 
-        ecommercedao.init();
         for(Element e: products){
             String price = "";
             BigDecimal newPrice = new BigDecimal(-1);
@@ -47,14 +45,6 @@ public class NovatechScrapper {
         }
     }
 
-    public static void createProducts(String title, String desc, BigDecimal price){
-        Product newProduct = new Product();
-        newProduct.setProduct_price(price);
-        newProduct.setProduct_name(title);
-        newProduct.setProduct_desc(desc);
-        ecommercedao.simpleSave(newProduct);
-    }
-
     public static Elements returnElements(String url) {
         try {
             doc = Jsoup.connect(url).get();
@@ -65,10 +55,6 @@ public class NovatechScrapper {
         }
         assert doc!=null;
         return doc.select(".col-xs-12 > div.search-box-results");
-    }
-
-    public static void main(String[] args) {
-            scrapeAll();
     }
 }
 
